@@ -6,20 +6,23 @@ from math import sqrt
 class Line:
     start: Point
     end: Point
+    name: str = None
 
     def __init__(self, point1: Point, point2: Point) -> None:
         self.start = point1
         self.end = point2
+        if point1.name and point2.name:
+            self.name = point1.name + point2.name
 
-    def invert(self) -> None:
-        self.start, self.end = self.end, self.start
-        # TODO: is I need this??
+
+    def invert(self) -> "Line":
+        return Line(self.end, self.start)
 
     def len(self) -> float:
         return sqrt(sum([(x - y) ** 2 for x, y in zip(self.start, self.end)]))
 
     def __str__(self) -> str:
-        return f"{self.start} {self.end}"
+        return f"{self.name}: {self.start} {self.end}"
 
     def to_vector(self) -> Vector:
         return Vector(self.end - self.start)

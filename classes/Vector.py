@@ -2,7 +2,7 @@ from classes.Point import Point
 import numpy as np
 
 
-class Vector():
+class Vector:
     end: Point
 
     def __init__(self, point: Point) -> None:
@@ -16,3 +16,13 @@ class Vector():
 
     def normalize(self) -> "Vector":
         return Vector(Point(self.end.values / self.norm()))
+
+    def __mul__(self, other: float) -> "Vector":
+        return Vector(Point(other * self.end.values))
+
+    def __rmul__(self, other) -> "Vector":
+        return Vector(Point(other * self.end.values))
+
+    def __add__(self, other) -> "Vector":
+        return Vector(Point(self.end.values + other.values))
+
