@@ -1,6 +1,7 @@
 from classes.Point import Point
 from classes.Triangel import Triangle
 from classes.Line import Line
+from typing import Iterator
 
 
 class Frame:
