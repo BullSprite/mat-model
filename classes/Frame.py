@@ -18,6 +18,3 @@ class Frame:
 
     def points_iter(self) -> Iterator[Point]:
         return self.points.__iter__()
-
-
-
