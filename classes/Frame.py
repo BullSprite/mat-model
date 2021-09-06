@@ -13,6 +13,11 @@ class Frame:
         self.lines = [Line(p1, p2), Line(p2, p3), Line(p3, p4), Line(p4, p1)]
         self.name = p1.name + p2.name + p3.name + p4.name
 
-    def __iter__(self) -> Iterator[int]:
+    def lines_iter(self) -> Iterator[Line]:
+        return self.lines.__iter__()
+
+    def points_iter(self) -> Iterator[Point]:
         return self.points.__iter__()
+
+
 
