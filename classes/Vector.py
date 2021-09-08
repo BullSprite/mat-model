@@ -1,6 +1,7 @@
 from classes.Point import Point
 import numpy as np
 
+
 class Vector:
     end: Point
 
@@ -25,7 +26,7 @@ class Vector:
     def __add__(self, other) -> "Vector":
         return Vector(Point(self.end.values + other.values))
 
-    def angle_between(self, v2) -> float:
-        v1_u = self.normalize()
-        v2_u = v2.normalize()
-        return np.arccos(np.clip(np.dot(v1_u.end.values, v2_u.end.values), -1.0, 1.0))
+    def cos_angle_between(self, v2) -> float:
+        v1_u = self.normalize().end.values
+        v2_u = v2.normalize().end.values
+        return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
