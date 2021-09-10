@@ -15,6 +15,7 @@ def angle_calculation(v1: Vector, v2: Vector, height: float, triangle: Triangle)
 
 
 def integral(line: Line, op):
+    high_log = lambda x: log(abs((1 + tan(x / 2)) / (1 - tan(x / 2))))
     triangle = Triangle(line.start, line.end, op)
     height = triangle.get_height(op.name)
     intersect = triangle.get_height_intersect(op.name)
@@ -23,12 +24,10 @@ def integral(line: Line, op):
     AB = Line(triangle.points[0], triangle.points[1])
     amin = angle_calculation(AB, HB, height, triangle)
     amax = angle_calculation(AB, HA, height, triangle)
-    return (height * (log(abs((1 + tan(amax / 2)) / (1 - tan(amax / 2)))) - log(
-        abs((1 + tan(amin / 2)) / (1 - tan(amin / 2))))))
+    return (height * (high_log(amax) - high_log(amin)))
 
 
 def solution(points: list[np.ndarray], point_O: np.ndarray, num_f=1, num_p=1):
-    integ = 0
     op = Point(point_O, name='O')
     p = [Point(p, name=name) for p, name in zip(points, 'ABCD')]
     Sol_Frame = Frame(p[0], p[1], p[2], p[3])
