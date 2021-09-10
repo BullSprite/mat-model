@@ -47,7 +47,7 @@ def main():
     frame_number = 1
     point_number = 1
 
-    result = 2.7045407  # Результат из стандартной функции R
+    result = 0.7045407  # Результат из стандартной функции R
     result_f = solution(frame, point, frame_number, point_number)
     assert ((((result_f - result) ** 2) / (result ** 2)) * 100) < 1
 
