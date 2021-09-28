@@ -17,17 +17,18 @@ class Vector:
     def normalize(self) -> "Vector":
         return Vector(Point(self.end.values / self.norm()))
 
-    def __mul__(self, other: float) -> "Vector":
-        return Vector(Point(other * self.end.values))
+    def __mul__(self, other) -> "Vector":
+        if other is Vector:
+            return Vector(Point([np.cross(self.end.values, other.end.values)]))
+
+        else:
+            return Vector(Point(other * self.end.values))
 
     def __rmul__(self, other) -> "Vector":
         return Vector(Point(other * self.end.values))
 
     def __add__(self, other) -> "Vector":
         return Vector(Point(self.end.values + other.values))
-
-    def cross(self, other) -> "Vector":
-        return Vector(Point([np.cross(self.end.values, other.end.values)]))
 
     def cos_angle_between(self, v2) -> float:
         v1_u = self.normalize().end.values
