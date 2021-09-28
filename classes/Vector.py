@@ -20,7 +20,6 @@ class Vector:
     def __mul__(self, other) -> "Vector":
         if other is Vector:
             return Vector(Point([np.cross(self.end.values, other.end.values)]))
-
         else:
             return Vector(Point(other * self.end.values))
 
