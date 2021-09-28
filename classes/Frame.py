@@ -7,6 +7,7 @@ from classes.Line import Line
 from typing import Iterator
 from math import acos, log, tan
 
+
 class Frame:
     points: list[Point]
     lines: list[Line]
@@ -18,12 +19,10 @@ class Frame:
         self.name = p1.name + p2.name + p3.name + p4.name
 
     def central_point(self) -> Point:
-        coordinates = [0,0,0]
+        central_point = Point(name='O')
         for point in self.points:
-            coordinates[0] += point[0]
-            coordinates[1] += point[1]
-            coordinates[2] += point[2]
-        return Point[np.asarray(coordinates)]
+            central_point += point
+        return central_point / 4
 
     def lines_iter(self) -> Iterator[Line]:
         return self.lines.__iter__()
@@ -34,13 +33,12 @@ class Frame:
     def normal(self):
         points = []
         for line in self.lines_iter():
-            points.append(Point([line.end.values[0]-line.start.values[0]/2,
-                                 line.end.values[1]-line.start.values[1]/2,
-                                 line.end.values[2]-line.start.values[2]/2]))
-        TP = Line(points[0],points[2]).to_vector()
-        QR = Line(points[1],points[3]).to_vector()
-        return (TP*QR).normalize()
-
+            points.append(Point([line.end.values[0] - line.start.values[0] / 2,
+                                 line.end.values[1] - line.start.values[1] / 2,
+                                 line.end.values[2] - line.start.values[2] / 2]))
+        TP = Line(points[0], points[2]).to_vector()
+        QR = Line(points[1], points[3]).to_vector()
+        return (TP * QR).normalize()
 
     def __integral(self, line: Line, op):
         high_log = lambda x: log(abs((1 + tan(x / 2)) / (1 - tan(x / 2))))
@@ -63,6 +61,3 @@ class Frame:
     def integral_summ(self, point_O: np.ndarray, num_f=1, num_p=1):
         op = Point(point_O, name='O')
         return sum(self.__integral(line, op) for line in self.lines_iter())
-
-
-
