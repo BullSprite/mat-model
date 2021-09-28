@@ -40,3 +40,6 @@ class Point:
 
     def __add__(self, other: "Point") -> "Point":
         return Point([p1 + p2 for p1, p2 in zip(self.values, other.values)])
+
+    def __truediv__(self, other: float):
+        return Point([p / other for p in self.values])
