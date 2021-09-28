@@ -30,9 +30,6 @@ class Vector:
     def __add__(self, other) -> "Vector":
         return Vector(Point(self.end.values + other.values))
 
-    def cross(self, other) -> "Vector":
-        return Vector(Point([np.cross(self.end.values, other.end.values)]))
-
     def cos_angle_between(self, v2) -> float:
         v1_u = self.normalize().end.values
         v2_u = v2.normalize().end.values
