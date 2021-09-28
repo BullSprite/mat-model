@@ -30,7 +30,7 @@ class Frame:
     def points_iter(self) -> Iterator[Point]:
         return self.points.__iter__()
 
-    def normal(self):
+    def norm(self):
         points = []
         for line in self.lines_iter():
             points.append(Point([line.end.values[0] - line.start.values[0] / 2,
