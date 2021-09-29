@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 from classes.Point import Point
@@ -14,22 +16,28 @@ class Frame:
     name: str
     basis: list[Vector]
     central_point: Point
+    square: float
+    idx: str
 
-    def __init__(self, p1: Point, p2: Point, p3: Point, p4: Point):
+    def __init__(self, p1: Point, p2: Point, p3: Point, p4: Point, index=None):
         self.points = [p1, p2, p3, p4]
         self.lines = [Line(p1, p2), Line(p2, p3), Line(p3, p4), Line(p4, p1)]
         self.name = p1.name + p2.name + p3.name + p4.name
+        self.idx = index
         self.central_point = self.__central_point()
         self.central_point.name = 'O'
         self.basis = self.__basis()
 
+
     def __central_point(self):
-        return sum(self.points)/4
+        return sum(self.points) / 4
 
     def __basis(self):
         TP = Line((self.points[0] + self.points[1]) / 2, (self.points[2] + self.points[3]) / 2).to_vector()
         QR = Line((self.points[1] + self.points[2]) / 2, (self.points[0] + self.points[3]) / 2).to_vector()
-        n_e = ((TP * QR) + self.central_point)
+        n = TP * QR
+        self.square = n.norm()
+        n_e = n + self.central_point
         t1 = (TP + self.central_point)
         t2 = (t1 * n_e)
         return [n_e.normalize(), t1.normalize(), t2.normalize()]
@@ -43,7 +51,10 @@ class Frame:
     def __integral(self, line: Line, op):
         high_log = lambda x: log(abs((1 + tan(x / 2)) / (1 - tan(x / 2))))
         triangle = Triangle(line.start, line.end, op)
-        height = triangle.get_height(op.name)
+        try:
+            height = triangle.get_height(op.name)
+        except ZeroDivisionError:
+            return 0
         intersect = triangle.get_height_intersect(op.name)
         HA = Line(intersect, triangle.points[0])
         HB = Line(intersect, triangle.points[1])
@@ -58,6 +69,12 @@ class Frame:
         else:
             return (-acos(height / triangle.lines[1].len()))
 
-    def integral_summ(self, point_O: np.ndarray, num_f=1, num_p=1):
-        op = Point(point_O, name='O')
-        return sum(self.__integral(line, op) for line in self.lines_iter())
+    def __eq__(self, other):
+        return self.idx == other.idx
+
+    def integral_summ(self, other: "Frame"):
+        if self == other:
+            return sum(self.__integral(line, self.central_point) for line in self.lines_iter())
+        else:
+            return other.square / math.sqrt(
+                sum([val ** 2 for val in (self.central_point - other.central_point).values]))
