@@ -18,8 +18,8 @@ class Vector:
         return Vector(Point(self.end.values / self.norm()))
 
     def __mul__(self, other) -> "Vector":
-        if other is Vector:
-            return Vector(Point([np.cross(self.end.values, other.end.values)]))
+        if isinstance(other, Vector):
+            return Vector(Point(np.cross(self.end.values, other.end.values)))
         else:
             return Vector(Point(other * self.end.values))
 
