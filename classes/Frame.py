@@ -20,10 +20,12 @@ class Frame:
         self.lines = [Line(p1, p2), Line(p2, p3), Line(p3, p4), Line(p4, p1)]
         self.name = p1.name + p2.name + p3.name + p4.name
         self.central_point = self.__central_point()
+        
+        self.central_point.name = 'O'
         self.basis = self.__basis()
 
     def __central_point(self):
-        return sum(self.points, Point(name='O'))/4
+        return sum(self.points)/4
 
     def __basis(self):
         TP = Line((self.points[0] + self.points[1]) / 2, (self.points[2] + self.points[3]) / 2).to_vector()
