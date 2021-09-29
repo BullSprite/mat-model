@@ -12,33 +12,33 @@ class Frame:
     points: list[Point]
     lines: list[Line]
     name: str
+    basis: list[Vector]
+    central_point: Point
 
     def __init__(self, p1: Point, p2: Point, p3: Point, p4: Point):
         self.points = [p1, p2, p3, p4]
         self.lines = [Line(p1, p2), Line(p2, p3), Line(p3, p4), Line(p4, p1)]
         self.name = p1.name + p2.name + p3.name + p4.name
+        self.central_point = self.__central_point()
+        self.central_point.name = 'O'
+        self.basis = self.__basis()
 
-    def central_point(self) -> Point:
-        central_point = Point(name='O')
-        for point in self.points:
-            central_point += point
-        return central_point / 4
+    def __central_point(self):
+        return sum(self.points)/4
+
+    def __basis(self):
+        TP = Line((self.points[0] + self.points[1]) / 2, (self.points[2] + self.points[3]) / 2).to_vector()
+        QR = Line((self.points[1] + self.points[2]) / 2, (self.points[0] + self.points[3]) / 2).to_vector()
+        n_e = ((TP * QR) + self.central_point)
+        t1 = (TP + self.central_point)
+        t2 = (t1 * n_e)
+        return [n_e.normalize(), t1.normalize(), t2.normalize()]
 
     def lines_iter(self) -> Iterator[Line]:
         return self.lines.__iter__()
 
     def points_iter(self) -> Iterator[Point]:
         return self.points.__iter__()
-
-    def norm(self):
-        points = []
-        for line in self.lines_iter():
-            points.append(Point([line.end.values[0] - line.start.values[0] / 2,
-                                 line.end.values[1] - line.start.values[1] / 2,
-                                 line.end.values[2] - line.start.values[2] / 2]))
-        TP = Line(points[0], points[2]).to_vector()
-        QR = Line(points[1], points[3]).to_vector()
-        return (TP * QR).normalize()
 
     def __integral(self, line: Line, op):
         high_log = lambda x: log(abs((1 + tan(x / 2)) / (1 - tan(x / 2))))
