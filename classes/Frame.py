@@ -19,16 +19,19 @@ class Frame:
         self.points = [p1, p2, p3, p4]
         self.lines = [Line(p1, p2), Line(p2, p3), Line(p3, p4), Line(p4, p1)]
         self.name = p1.name + p2.name + p3.name + p4.name
-        for point in self.points:
-            self.central_point += point
-        self.central_point = self.central_point / 4
-        self.central_point.name = 'O'
-        TP = Line((p1 + p2) / 2, (p3 + p4) / 2).to_vector()
-        QR = Line((p2 + p3) / 2, (p1 + p4) / 2).to_vector()
+        self.central_point = self.__central_point()
+        self.basis = self.__basis()
+
+    def __central_point(self):
+        return sum(self.points, Point(name='O'))
+
+    def __basis(self):
+        TP = Line((self.points[0] + self.points[1]) / 2, (self.points[2] + self.points[3]) / 2).to_vector()
+        QR = Line((self.points[1] + self.points[2]) / 2, (self.points[0] + self.points[3]) / 2).to_vector()
         n_e = ((TP * QR) + self.central_point)
         t1 = (TP + self.central_point)
         t2 = (t1 * n_e)
-        self.basis = [n_e.normalize(), t1.normalize(), t2.normalize()]
+        return [n_e.normalize(), t1.normalize(), t2.normalize()]
 
     def lines_iter(self) -> Iterator[Line]:
         return self.lines.__iter__()
