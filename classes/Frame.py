@@ -28,7 +28,6 @@ class Frame:
         self.central_point.name = 'O'
         self.basis = self.__basis()
 
-
     def __central_point(self):
         return sum(self.points) / 4
 
@@ -52,8 +51,9 @@ class Frame:
         high_log = lambda x: log(abs((1 + tan(x / 2)) / (1 - tan(x / 2))))
         triangle = Triangle(line.start, line.end, op)
         try:
+            np.seterr(all='raise')
             height = triangle.get_height(op.name)
-        except ZeroDivisionError:
+        except:
             return 0
         intersect = triangle.get_height_intersect(op.name)
         HA = Line(intersect, triangle.points[0])
@@ -61,13 +61,13 @@ class Frame:
         AB = Line(triangle.points[0], triangle.points[1])
         amin = self.__angle_calculation(AB, HB, height, triangle)
         amax = self.__angle_calculation(AB, HA, height, triangle)
-        return (height * (high_log(amax) - high_log(amin)))
+        return height * (high_log(amax) - high_log(amin))
 
-    def __angle_calculation(self, v1: Vector, v2: Vector, height: float, triangle: Triangle):
-        if v1.len() * v2.len() * v1.to_vector().cos_angle_between(v2.to_vector()) > 0:
-            return (acos(height / triangle.lines[1].len()))
+    def __angle_calculation(self, v1: Line, v2: Line, height: float, triangle: Triangle):
+        if v1.len() * v2.len() * v1.to_vector().arcos_angle_between(v2.to_vector()) > 0:
+            return acos(height / triangle.lines[1].len())
         else:
-            return (-acos(height / triangle.lines[1].len()))
+            return -acos(height / triangle.lines[1].len())
 
     def __eq__(self, other):
         return self.idx == other.idx

@@ -22,24 +22,25 @@ class Triangle:
     def perimeter(self) -> float:
         return sum([x.len() for x in self.lines_iter()])
 
-    def area(self) -> float:
-        half_perimeter = self.perimeter() / 2
-        return sqrt(half_perimeter * prod([(half_perimeter - line.len()) for line in self.lines_iter()]))
+    def __area2(self, name) -> float:
+        side = [l for l in self.lines if name in l.name]
+        return (side[0].invert().to_vector() * side[1].to_vector()).norm()
 
     def get_height(self, name: str) -> float:
         if name not in self.points_names():
             raise ValueError("No such points in triangle")
         base = next(l for l in self.lines_iter() if name not in l.name)
-        return 2 * self.area() / base.len()
+        return self.__area2(name) / base.len()
 
     def get_height_intersect(self, name: str) -> Point:
         if name not in self.points_names():
             raise ValueError("No such points in triangle")
         base = next(l for l in self.lines if name not in l.name)
-        sign = copysign(1, self.get_angle_cos(re.split('[^A-Z]+', base.name)[0] + re.split('[A-Z]+', base.name)[1]))
-        side = next(l for l in self.lines if name in l.name and base.name[0] in l.name)
-        return (sign * base.to_vector().normalize() *
-                sqrt(side.len() ** 2 - self.get_height(name) ** 2) + base.start).end
+        base_vector = base.to_vector()
+        side_point = base.start
+        side = next(l for l in self.lines if name in l.name and side_point.name in l.name)
+        cos = base_vector.cos_angle_between((side.invert() if side.name[0] == 'O' else side).to_vector())
+        return (cos * side.len() * base_vector.normalize()).end + base.start
 
     def get_angle_cos(self, name: str) -> float:
         if name not in self.points_names():
