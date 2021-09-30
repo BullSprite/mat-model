@@ -78,3 +78,13 @@ class Frame:
         else:
             return other.square / math.sqrt(
                 sum([val ** 2 for val in (self.central_point - other.central_point).values]))
+
+    def max_diameter(self) -> list[Line]:
+        all_pd = [Line(self.points[0], self.points[2]), Line(self.points[1], self.points[3])] + self.line
+        max_len = max(list(map(lambda x: x.len(), all_pd)))
+        max_d = []
+        for i in range(0, len(all_pd)):
+            if all_pd[i].len() == max_len:
+                max_d.append(all_pd[i])
+        return max_d 
+        
