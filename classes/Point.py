@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Iterator
+from typing import Iterator, Union
 
 
 class Point:
@@ -10,7 +10,7 @@ class Point:
     def __init__(self, *args, **kwargs) -> None:
         if len(args) > 3:
             raise Exception("Too many arguments for Vector")
-        elif len(args) == 1:
+        elif len(args) == 1 and not isinstance(args[0], int):
             if isinstance(args[0], list):
                 self.values = np.array(args[0])
             elif isinstance(args[0], np.ndarray):
@@ -38,8 +38,13 @@ class Point:
     def __sub__(self, other: "Point") -> "Point":
         return Point([p1 - p2 for p1, p2 in zip(self.values, other.values)])
 
-    def __add__(self, other: "Point") -> "Point":
+    def __add__(self, other: Union["Point", int]) -> "Point":
+        if isinstance(other, int):
+            other = Point(other)
         return Point([p1 + p2 for p1, p2 in zip(self.values, other.values)])
+
+    def __radd__(self, other: Union["Point", int]) -> "Point":
+        return self.__add__(other)
 
     def __truediv__(self, other: float):
         return Point([p / other for p in self.values])
