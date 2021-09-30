@@ -3,6 +3,7 @@ from classes.Line import Line
 from classes.helpers import prod
 from math import sqrt, copysign
 from typing import Iterator
+import re
 
 
 class Triangle:
@@ -35,7 +36,7 @@ class Triangle:
         if name not in self.points_names():
             raise ValueError("No such points in triangle")
         base = next(l for l in self.lines if name not in l.name)
-        sign = copysign(1, self.get_angle_cos(base.name[0]))
+        sign = copysign(1, self.get_angle_cos(re.split('[^A-Z]+', base.name)[0] + re.split('[A-Z]+', base.name)[1]))
         side = next(l for l in self.lines if name in l.name and base.name[0] in l.name)
         return (sign * base.to_vector().normalize() *
                 sqrt(side.len() ** 2 - self.get_height(name) ** 2) + base.start).end
