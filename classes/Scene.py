@@ -43,3 +43,10 @@ class Scene:
             for module in object:
                 for frame in module:
                     yield frame
+
+    def __len__(self):
+        s = 0
+        for object in self.objects:
+            for module in object:
+                s += len(module)
+        return s
