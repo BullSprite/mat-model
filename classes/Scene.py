@@ -1,5 +1,7 @@
 from classes.Frame import Frame
 from classes.Point import Point
+import concurrent.futures
+import numpy as np
 
 
 class Scene:
@@ -31,7 +33,7 @@ class Scene:
                             Frame(points[0], points[1], points[2], points[3], index=idx))
         return parsed_list
 
-    def collaction(self, n_frame, n_obj=0, n_module=0):
+    def colocation(self, n_frame, n_obj=0, n_module=0):
         frame = self.objects[n_obj][n_module][n_frame]
         return sum(frame.integral_summ(other) for other in self)
 
@@ -50,3 +52,65 @@ class Scene:
             for module in object:
                 s += len(module)
         return s
+
+    def __getitem__(self, item3=0, item2=0, item1=0):
+        return self.objects[item1][item2][item3]
+
+    def calculate_colocation(self, start, end):
+        res = []
+        for i in range(start, end):
+            result = self.colocation(i)
+            res.append(result)
+        return res
+
+    def calculate_all_colocations(self, n_proc=1):
+        res = []
+        l = len(self)
+        s = int(l / n_proc)
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            results = [executor.submit(self.calculate_colocation, start, min(start + s, l))
+                       for start in range(0, l, s)]
+
+            for proc in concurrent.futures.as_completed(results):
+                res += proc.result()
+        return res
+
+    def calculate_diag_colocation(self, start, end):
+        res = []
+        for i in range(start, end):
+            res.append(self[i].integral_summ(self[i]))
+        return res
+
+    def calculate_diag_colocations(self, n_proc=1):
+        res = []
+        l = len(self)
+        s = int(l / n_proc)
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            results = [executor.submit(self.calculate_diag_colocation, start, min(start + s, l))
+                       for start in range(0, l, s)]
+
+            for proc in concurrent.futures.as_completed(results):
+                res += proc.result()
+        return res
+
+    def calculate_k(self, start, end):
+        res = []
+        for i in range(start, end):
+            res1 = []
+            for frame in self:
+                res1.append(self[i].calk_k(frame))
+            #res1.append(0)
+            res.append(res1)
+        return res
+
+    def calculate_all_k(self, n_proc=1):
+        res = []
+        l = len(self)
+        s = int(l / n_proc)
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            results = [executor.submit(self.calculate_k, start, min(start + s, l)) for start in range(0, l, s)]
+
+            for proc in concurrent.futures.as_completed(results):
+                res += proc.result()
+        #res += [[1] * len(res[0])]
+        return np.array(res)
