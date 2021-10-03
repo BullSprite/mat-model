@@ -87,5 +87,5 @@ class Frame:
         if self == other:
             return 0
         else:
-            denominator = math.pi * 4 * sum(p**2 for p in (self.central_point - other.central_point))
+            denominator = math.pi * 4 * math.sqrt(sum(p**2 for p in (self.central_point - other.central_point)))
             return 1 / denominator
