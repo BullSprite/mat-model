@@ -8,6 +8,7 @@ from classes.Vector import Vector
 from classes.Line import Line
 from typing import Iterator
 from math import acos, log, tan
+import concurrent.futures
 
 
 class Frame:
@@ -81,3 +82,10 @@ class Frame:
 
     def max_diameter(self) -> float:
         return max(x.len() for x in (self.lines + [Line(p1, p2) for p1, p2 in zip(self.points[:2], self.points[2:])]))
+
+    def calk_k(self, other: "Frame"):
+        if self == other:
+            return 0
+        else:
+            denominator = math.pi * 4 * sum(p**2 for p in (self.central_point - other.central_point))
+            return 1 / denominator
