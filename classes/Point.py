@@ -1,5 +1,6 @@
 import numpy as np
 from typing import Iterator, Union
+from numba import jit
 
 
 class Point:
@@ -46,5 +47,10 @@ class Point:
     def __radd__(self, other: Union["Point", int]) -> "Point":
         return self.__add__(other)
 
+    @staticmethod
+    @jit(nopython=True, parallel=True, nogil=True)
+    def __truediv_numba(p1: np.ndarray, p2: Union[np.ndarray, float, int]):
+        return p1 / p2
+
     def __truediv__(self, other: float):
-        return Point([p / other for p in self.values])
+        return Point(Point.__truediv_numba(self.values, other))

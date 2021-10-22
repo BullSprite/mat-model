@@ -1,6 +1,6 @@
 from classes.Point import Point
 from classes.Vector import Vector
-from math import sqrt
+import numpy as np
 
 
 class Line:
@@ -19,7 +19,7 @@ class Line:
         return Line(self.end, self.start)
 
     def len(self) -> float:
-        return sqrt(sum([(x - y) ** 2 for x, y in zip(self.start, self.end)]))
+        return np.sqrt(sum([(x - y) ** 2 for x, y in zip(self.start, self.end)]))
 
     def __str__(self) -> str:
         return f"{self.name}: {self.start} {self.end}"

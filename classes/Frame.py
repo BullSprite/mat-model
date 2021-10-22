@@ -1,5 +1,3 @@
-import math
-
 import numpy as np
 
 from classes.Point import Point
@@ -8,7 +6,6 @@ from classes.Vector import Vector
 from classes.Line import Line
 from typing import Iterator
 from math import acos, log, tan
-import concurrent.futures
 
 
 class Frame:
@@ -77,15 +74,18 @@ class Frame:
         if self == other:
             return sum(self.__integral(line, self.central_point) for line in self.lines_iter())
         else:
-            return other.square / math.sqrt(
+            return other.square / np.sqrt(
                 sum([val ** 2 for val in (self.central_point - other.central_point).values]))
 
     def max_diameter(self) -> float:
         return max(x.len() for x in (self.lines + [Line(p1, p2) for p1, p2 in zip(self.points[:2], self.points[2:])]))
 
-    def calk_k(self, other: "Frame"):
+    def calk_k(self, other: "Frame", func):
         if self == other:
-            return 0
+            return 0  # self.integral_summ(other)
         else:
-            denominator = math.pi * 4 * math.sqrt(sum(p**2 for p in (self.central_point - other.central_point)))
-            return 1 / denominator
+            norm = Vector(other.central_point - self.central_point).norm()
+            # denominator = np.pi * 4 * np.sqrt(sum([np.power(p, 2) for p in sub_points])) * other.square
+            denominator = np.pi * 4 * norm
+            numerator = func(self.central_point, other.central_point) * other.square
+            return numerator / denominator

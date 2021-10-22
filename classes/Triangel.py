@@ -1,9 +1,7 @@
 from classes.Point import Point
 from classes.Line import Line
 from classes.helpers import prod
-from math import sqrt, copysign
 from typing import Iterator
-import re
 
 
 class Triangle:
